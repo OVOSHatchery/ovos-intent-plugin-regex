@@ -1,0 +1,4 @@
+recursive-include ovos_intent_plugin_regex/ *
+recursive-include requirements/ *
+include CHANGELOG.md
+include LICENSE
