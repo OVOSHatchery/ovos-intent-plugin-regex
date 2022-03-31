@@ -1,11 +1,14 @@
-import re
-
-from ovos_plugin_manager.templates.intents import IntentExtractor
+from ovos_plugin_manager.intents import IntentExtractor, IntentPriority, IntentDeterminationStrategy
 
 
 class RegexExtractor(IntentExtractor):
-    keyword_based = False
-    regex_entity_support = True
+
+    def __init__(self, config=None,
+                 strategy=IntentDeterminationStrategy.SINGLE_INTENT,
+                 priority=IntentPriority.REGEX_LOW,
+                 segmenter=None):
+        super().__init__(config, strategy=strategy,
+                         priority=priority, segmenter=segmenter)
 
     def calc_intent(self, utterance, min_conf=0.0):
         utterance = utterance.strip().lower()
