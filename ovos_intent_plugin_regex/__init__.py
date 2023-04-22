@@ -1,4 +1,4 @@
-from ovos_plugin_manager.intents import IntentExtractor, IntentPriority, RegexIntentDefinition, IntentDeterminationStrategy
+from ovos_plugin_manager.intents import IntentExtractor, IntentPriority, RegexIntentDefinition, IntentMatch, IntentDeterminationStrategy
 
 
 class RegexExtractor(IntentExtractor):
@@ -22,15 +22,17 @@ class RegexExtractor(IntentExtractor):
             for pattern in intent.patterns:
                 match = pattern.match(utterance)
                 if match:
-                    return {'conf': 1.0,
+                    intent= {'conf': 1.0,
                             'intent_type': intent.name,
                             'entities': match.groupdict(),
                             'utterance': utterance,
                             'utterance_remainder': "",
                             'intent_engine': 'regex'}
-        return {'conf': 0,
-                'intent_type': 'unknown',
-                'entities': {},
-                'utterance': utterance,
-                'utterance_remainder': utterance,
-                'intent_engine': 'regex'}
+
+                    skill_id = self.get_intent_skill_id(intent["intent_type"])
+                    return IntentMatch(intent_service=intent["intent_engine"],
+                                       intent_type=intent["intent_type"],
+                                       intent_data=intent,
+                                       confidence=intent["conf"],
+                                       skill_id=skill_id)
+        return None
