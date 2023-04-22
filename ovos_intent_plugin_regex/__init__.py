@@ -9,10 +9,12 @@ class RegexExtractor(IntentExtractor):
                  segmenter=None):
         super().__init__(config, strategy=strategy,
                          priority=priority, segmenter=segmenter)
+        self.patterns = {}  # lang: {name, patterns]
 
-    def calc_intent(self, utterance, min_conf=0.0):
+    def calc_intent(self, utterance, min_conf=0.0, lang=None, session=None):
+        lang = lang or self.lang
         utterance = utterance.strip().lower()
-        for name, patterns in self.patterns.items():
+        for name, patterns in self.patterns.get(lang, {}).items():
             for pattern in patterns:
                 match = pattern.match(utterance)
                 if match:
