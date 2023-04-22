@@ -1,4 +1,5 @@
-from ovos_plugin_manager.intents import IntentExtractor, IntentPriority, RegexIntentDefinition, IntentMatch, IntentDeterminationStrategy
+from ovos_plugin_manager.intents import IntentExtractor, IntentPriority, RegexIntentDefinition, IntentMatch, \
+    IntentDeterminationStrategy
 
 
 class RegexExtractor(IntentExtractor):
@@ -32,5 +33,7 @@ class RegexExtractor(IntentExtractor):
                                        intent_type=intent.name,
                                        intent_data=data,
                                        confidence=1.0,
+                                       utterance=utterance,
+                                       utterance_remainder=intent["utterance_remainder"],
                                        skill_id=intent.skill_id)
         return None
