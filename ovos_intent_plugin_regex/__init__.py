@@ -1,4 +1,4 @@
-from ovos_plugin_manager.intents import IntentExtractor, IntentPriority, IntentDeterminationStrategy
+from ovos_plugin_manager.intents import IntentExtractor, IntentPriority, RegexIntentDefinition, IntentDeterminationStrategy
 
 
 class RegexExtractor(IntentExtractor):
@@ -14,12 +14,16 @@ class RegexExtractor(IntentExtractor):
     def calc_intent(self, utterance, min_conf=0.0, lang=None, session=None):
         lang = lang or self.lang
         utterance = utterance.strip().lower()
-        for name, patterns in self.patterns.get(lang, {}).items():
-            for pattern in patterns:
+        for intent in self.registered_intents:
+            if intent.lang != lang:
+                continue
+            if not isinstance(intent, RegexIntentDefinition):
+                continue
+            for pattern in intent.patterns:
                 match = pattern.match(utterance)
                 if match:
                     return {'conf': 1.0,
-                            'intent_type': name,
+                            'intent_type': intent.name,
                             'entities': match.groupdict(),
                             'utterance': utterance,
                             'utterance_remainder': "",
