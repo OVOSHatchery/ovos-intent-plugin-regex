@@ -1,6 +1,8 @@
 # OVOS Intent Plugin - Regex
 
-WIP - needs https://github.com/OpenVoiceOS/OVOS-plugin-manager/pull/47
+WIP - needs https://github.com/OpenVoiceOS/ovos-plugin-manager/pull/177
+
+provides the `regex` pipeline component
 
 Regex intent engine extracted from mycroft mark2
 
