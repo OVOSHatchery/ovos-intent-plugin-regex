@@ -25,16 +25,9 @@ class RegexPipelinePlugin(IntentPipelinePlugin):
             for pattern in intent.patterns:
                 match = pattern.match(utterance)
                 if match:
-                    data = {'conf': 1.0,
-                            'intent_type': intent.name,
-                            'entities': match.groupdict(),
-                            'utterance': utterance,
-                            'utterance_remainder': "",
-                            'intent_engine': 'regex'}
-
                     return IntentMatch(intent_service=self.matcher_id,
                                        intent_type=intent.name,
-                                       intent_data=data,
+                                       intent_data=match.groupdict(),
                                        confidence=1.0,
                                        utterance=utterance,
                                        skill_id=intent.skill_id)
