@@ -1,24 +1,27 @@
-from ovos_plugin_manager.intents import IntentExtractor, IntentPriority, RegexIntentDefinition, IntentMatch, \
-    IntentDeterminationStrategy
+from ovos_plugin_manager.templates.pipeline import IntentPipelinePlugin, RegexIntentDefinition, IntentMatch
+from ovos_utils import classproperty
 
 
-class RegexExtractor(IntentExtractor):
+class RegexPipelinePlugin(IntentPipelinePlugin):
 
-    def __init__(self, config=None,
-                 strategy=IntentDeterminationStrategy.SINGLE_INTENT,
-                 priority=IntentPriority.REGEX_LOW,
-                 segmenter=None):
-        super().__init__(config, strategy=strategy,
-                         priority=priority, segmenter=segmenter)
+    # plugin api
+    @classproperty
+    def matcher_id(self):
+        return "regex"
 
-    def calc_intent(self, utterance, min_conf=0.0, lang=None, session=None):
+    def match(self, utterances, lang, message):
+        return self.calc_intent(utterances, lang=lang)
+
+    def train(self):
+        # no training step needed
+        return True
+
+    # implementation
+    def calc_intent(self, utterance, min_conf=0.0, lang=None):
         lang = lang or self.lang
         utterance = utterance.strip().lower()
-        for intent in self.registered_intents:
-            if intent.lang != lang:
-                continue
-            if not isinstance(intent, RegexIntentDefinition):
-                continue
+        for intent in (e for e in self.registered_intents
+                       if e.lang == lang and isinstance(e, RegexIntentDefinition)):
             for pattern in intent.patterns:
                 match = pattern.match(utterance)
                 if match:
@@ -29,11 +32,10 @@ class RegexExtractor(IntentExtractor):
                             'utterance_remainder': "",
                             'intent_engine': 'regex'}
 
-                    return IntentMatch(intent_service="regex",
+                    return IntentMatch(intent_service=self.matcher_id,
                                        intent_type=intent.name,
                                        intent_data=data,
                                        confidence=1.0,
                                        utterance=utterance,
-                                       utterance_remainder=intent["utterance_remainder"],
                                        skill_id=intent.skill_id)
         return None
